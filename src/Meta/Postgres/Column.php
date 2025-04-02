@@ -84,9 +84,8 @@ class Column implements \Reliese\Meta\Column
      */
     protected function parsePrecision($databaseType, Fluent $attributes)
     {
-        // Fix for str_replace() at line 88: Default to '0' if null
-        $precision = $this->get('numeric_precision', '0');
-        $precision = explode(',', str_replace("'", '', $precision));
+        $precision = $this->get('numeric_precision', ''); // Default to empty string instead of 'string'
+        $precision = explode(',', str_replace("'", '', $precision ?? '')); // Ensure $precision is string
 
         // Check whether it's an enum
         if ($databaseType == 'enum') {
@@ -193,11 +192,10 @@ class Column implements \Reliese\Meta\Column
      */
     private function defaultIsNextVal(Fluent $attributes)
     {
-        // Fix for preg_match() at line 200: Default to '' if null
-        $value = $this->get('column_default', $this->get('generation_expression', '')) ?? '';
+        $value = $this->get('column_default', $this->get('generation_expression', null));
         $isIdentity = $this->get('is_identity');
         $identityGeneration =  $this->get('identity_generation');
 
-        return preg_match('/nextval\(/i', $value) || ($isIdentity === 'YES' && $identityGeneration === 'BY DEFAULT');
+        return preg_match('/nextval\(/i', $value ?? '') || ($isIdentity === 'YES' && $identityGeneration === 'BY DEFAULT');
     }
 }
