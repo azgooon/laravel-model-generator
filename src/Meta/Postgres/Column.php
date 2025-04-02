@@ -20,7 +20,7 @@ class Column implements \Reliese\Meta\Column
      * @var array
      */
     protected $metas = [
-      'type', 'name', 'autoincrement', 'nullable', 'default', 'comment',
+        'type', 'name', 'autoincrement', 'nullable', 'default', 'comment',
     ];
 
     /**
@@ -28,12 +28,12 @@ class Column implements \Reliese\Meta\Column
      * @todo check these
      */
     public static $mappings = [
-      'string' => ['character varying', 'varchar', 'text', 'string', 'char', 'character','enum', 'tinytext', 'mediumtext', 'longtext', 'json'],
-      'datetime' => ['timestamp with time zone', 'timestamp without time zone', 'timestamptz', 'datetime', 'year', 'date', 'time', 'timestamp'],
-      'int' => ['int', 'integer', 'tinyint', 'smallint', 'mediumint', 'bigint', 'bigserial', 'serial', 'smallserial', 'tinyserial', 'serial4', 'serial8'],
-      'float' => ['float', 'decimal', 'numeric', 'dec', 'fixed', 'double', 'real', 'double precision'],
-      'boolean' => ['boolean', 'bool', 'bit'],
-      'binary' => ['blob', 'longblob', 'jsonb'],
+        'string' => ['character varying', 'varchar', 'text', 'string', 'char', 'character', 'enum', 'tinytext', 'mediumtext', 'longtext', 'json'],
+        'datetime' => ['timestamp with time zone', 'timestamp without time zone', 'timestamptz', 'datetime', 'year', 'date', 'time', 'timestamp'],
+        'int' => ['int', 'integer', 'tinyint', 'smallint', 'mediumint', 'bigint', 'bigserial', 'serial', 'smallserial', 'tinyserial', 'serial4', 'serial8'],
+        'float' => ['float', 'decimal', 'numeric', 'dec', 'fixed', 'double', 'real', 'double precision'],
+        'boolean' => ['boolean', 'bool', 'bit'],
+        'binary' => ['blob', 'longblob', 'jsonb'],
     ];
 
     /**
@@ -84,13 +84,13 @@ class Column implements \Reliese\Meta\Column
      */
     protected function parsePrecision($databaseType, Fluent $attributes)
     {
-        $precision = $this->get('numeric_precision', 'string');
+        // Fix for str_replace() at line 88: Default to '0' if null
+        $precision = $this->get('numeric_precision', '0');
         $precision = explode(',', str_replace("'", '', $precision));
 
         // Check whether it's an enum
         if ($databaseType == 'enum') {
             //$attributes['enum'] = $precision; //todo
-
             return;
         }
 
@@ -193,7 +193,8 @@ class Column implements \Reliese\Meta\Column
      */
     private function defaultIsNextVal(Fluent $attributes)
     {
-        $value = $this->get('column_default', $this->get('generation_expression', null));
+        // Fix for preg_match() at line 200: Default to '' if null
+        $value = $this->get('column_default', $this->get('generation_expression', '')) ?? '';
         $isIdentity = $this->get('is_identity');
         $identityGeneration =  $this->get('identity_generation');
 
