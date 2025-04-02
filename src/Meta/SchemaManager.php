@@ -10,6 +10,7 @@ namespace Reliese\Meta;
 use ArrayIterator;
 use RuntimeException;
 use IteratorAggregate;
+use Traversable; // Added this line
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\PostgresConnection;
